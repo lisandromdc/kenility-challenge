@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    volumes:
+      - db_data:/data/db
+    
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4000:3000
+    environment:
+      PORT: ${PORT}
+      MONGODB_URI: ${MONGODB_URI}
+      DB_NAME: ${DB_NAME}
+      NODE_ENV: ${NODE_ENV:-production}
+    depends_on:
+      - db
+    volumes:
+      - ./src:/usr/app/src
+
+volumes:
+  db_data: {}
